@@ -1,0 +1,115 @@
+<html>
+<head>
+    <script src='CL2 Formatter.js'> </script>
+    <script src='Family.js'> </script>
+    <script src='RegistrationFile.js'> </script>
+    <script src='PapaParse-4.5.0/papaparse.min.js'></script>
+</head>
+<body>
+    <table border="1">
+        <tr><th>Number of swimmers:</th><td id="numOfSwimmers">N/A</td></tr>
+        <tr><th>Number of families:</th><td id="numOfFamilies">N/A</td></tr>
+        <tr><th>Swimmers per age group:</th><td>
+            <table border="1"><tr>
+                <th>6 and under</th>
+                <th>7-8</th>
+                <th>9-10</th>
+                <th>11-12</th>
+                <th>13-14</th>
+                <th>15-18</th>
+            </tr>
+            <tr>
+                <td id="ageGroup1">N/A</td>
+                <td id="ageGroup2">N/A</td>
+                <td id="ageGroup3">N/A</td>
+                <td id="ageGroup4">N/A</td>
+                <td id="ageGroup5">N/A</td>
+                <td id="ageGroup6">N/A</td>
+            </tr></table>
+        </td></tr>
+        <tr><th>CL2 File contents:</th><td id="CL2 File">N/A</td></tr>
+    </table>
+    <script>
+        var families = [], ageUpDate = new Date(new Date().getFullYear(), 5, 1), numberOfAgeGroups = 6, numberOfSwimmers = 0;
+        
+        function displayAgeGroupCounts (familyArray, baseElementName) {
+            var ageGroups = [], i = 0, j = 0, age = 0;
+            
+            //Initialize ageGroups array
+            for (i = 0; i < numberOfAgeGroups; i += 1) {
+                ageGroups[i] = 0;
+            }
+            //Get age group counts
+            for (i=0; i < familyArray.length; i += 1) {
+                for (j=0; j < familyArray[i].swimmers.length; j += 1) {
+                    age = familyArray[i].swimmers[j].ageAsOf(ageUpDate);
+                    if (age <= 6) {
+                        ageGroups[0] += 1;
+                    } else if (age <= 8) {
+                        ageGroups[1] += 1;
+                    } else if (age <= 10) {
+                        ageGroups[2] += 1;
+                    } else if (age <= 12) {
+                        ageGroups[3] += 1;
+                    } else if (age <= 14) {
+                        ageGroups[4] += 1;
+                    } else {
+                        ageGroups[5] += 1;
+                    }
+                }
+            }
+            
+            for (i = 0; i < numberOfAgeGroups; i += 1) {
+                j = i + 1;
+                document.getElementById(baseElementName + j).innerHTML = ageGroups[i];
+            }            
+        }
+        
+        function createSwimmerArray (families) {
+            var i = 0, j = 0; swimmers = [];
+            
+            for (i = 0; i < families.length; i += 1) {
+                for (j = 0; j < families[i].swimmers.length; j += 1) {
+                    swimmers.push(families[i].swimmers[j]);
+                }
+            }
+            
+            return swimmers;
+        }
+        
+        function callback (familiesCB) {
+            for (var i = 0; i < familiesCB.length; i += 1) {
+                families.push(familiesCB[i]);
+            }
+        }
+        //Process file 2019 Registration data 4:8.csv
+        var headers = {
+            address: "address",
+            address2: "address2",
+            city: "city",
+            state: "state",
+            zip: "zip",
+            parentFirstName: "firstName",
+            parentLastName: "lastName"
+        }, RegistrationFile = new RegistrationFile("2019 Registration data 4:8.csv", headers, callback);
+        RegistrationFile.process();
+        //Process file 2019 Registration data 4:17.csv
+        //Count the number of swimmers
+        console.log(families);
+
+        document.getElementById("numOfFamilies").innerHTML = families.length;
+        document.getElementById("numOfSwimmers").innerHTML = numberOfSwimmers;
+        displayAgeGroupCounts(families, "ageGroup")
+
+        document.getElementById("CL2 File").innerHTML = "<pre>" + createCL2File(createSwimmerArray(families), ageUpDate) + "</pre>";
+        
+        function writeFile () {
+            var file={}, blobUrl="";
+            file = new File([cl2File], "TeamManagerImport.cl2", {type: "application/octet-stream"});
+            blobUrl = (URL || webkitURL).createObjectURL(file);
+            window.open(blobUrl);
+        }
+        
+    </script>
+</body>
+</html>

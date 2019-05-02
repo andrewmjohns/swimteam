@@ -1,0 +1,22 @@
+<html>
+<head>
+    <script src='CL2 Formatter.js'> </script>
+    <script src='Family.js'> </script>
+    <script src='PapaParse-4.5.0/papaparse.min.js'></script>
+</head>
+<body>
+    <script>
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if(xmlhttp.status === 200 && xmlhttp.readyState === 4) {
+                console.log(xmlhttp.responseText);
+            }
+        };
+        xmlhttp.open("POST","https://www.hometeamsonline.com/sportswebsites/ajax/Login.asp",true);
+        xmlhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xmlhttp.withCredentials = true;
+
+        xmlhttp.send("username=andrewmjohns@gmail.com&password=tT9aaK7WLQEEgv2");
+    </script>
+    </body>
+</html>

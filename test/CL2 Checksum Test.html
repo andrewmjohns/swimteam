@@ -1,0 +1,81 @@
+<html>
+<head>
+<script src='CL2 Formatter.js' />
+</head>
+<body>
+<script>
+//Read in file
+	function readSingleFile(e) {
+		var file = e.target.files[0];
+		if (file) {
+			var reader = new FileReader();
+			reader.onload = function(e) {
+				displayResults(validateHashes(e.target.result))
+			};
+			reader.readAsText(file);
+		}
+	}
+
+	function validateHashes(contents) {
+		var lines = contents.split("\n");
+		var results = { 
+			numberOfLines:lines.length,
+			computedCorrectly:0,
+			computedIncorrectly:0,
+			incorrectLines:[],
+			incorrectHashes:[],
+			incorrectComputedHashes:[]
+		}
+				
+		for(var i = 0; i < lines.length; ++i) {
+			//remove whatever white space may occur at the end of the line
+			lines[i] = lines[i].trim();
+			
+			//the last 4 digits of the string are the hash so keep this around for later
+			var fileHash = new String(lines[i].slice(-4));
+			
+			//remove the hash before sending the line to the function to calculate it
+			var computedHash = new String(calculateChecksum(lines[i].replace(fileHash,"")));
+
+			//compare the computed hash to what was found in the file and record the results
+			if(computedHash.valueOf() === fileHash.valueOf()) {
+				results.computedCorrectly++;
+			} else {
+				results.computedIncorrectly++;
+				results.incorrectLines.push(lines[i]);
+				results.incorrectHashes.push(fileHash);
+				results.incorrectComputedHashes(computedHash);
+			}
+		}
+		return results;
+	}
+	
+	function displayResults(results) {
+		document.getElementById("numberCorrect").innerHTML = results.computedCorrectly;
+		document.getElementById("numberIncorrect").innerHTML = results.computedIncorrectly;
+	}
+
+	
+	var fileInput = document.createElement("input");
+	fileInput.type = "file";
+	fileInput.id = "file-input";
+	fileInput.addEventListener('change', readSingleFile, false);
+	document.body.appendChild(fileInput);	
+
+</script>
+<h3>Results</h3>
+<table>
+<tr>
+	<th>Correct</th>
+	<td id="numberCorrect"></td>
+</tr>
+<tr>
+	<th>Incorrect</th>
+	<td id="numberIncorrect"></td>
+</tr>
+</table>
+
+<script>
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+Report file output
+   Families.csv - Name, Amount Owed, Mount Paid, Parent 1, Parent 2
+   Swimmers.csv - name, dob, t-shirt, gender, ageGroup
+   # of Families/# of First Children
+   # of Swimmers
+   # of reduced price children = # of swimmers - # of families
+   # in each age group (male, female, and total)
+   Total $ (value)
+   Total $ collected
+   
+Data model
+    Configuration File
+        - standard place on the file system with a standard name
+        - first thing to do is open and process the config file then that 
+        - defines registration files
+        - defines teams
+    Registration File
+        - Headings - JSON of strings mapping standard headings to the CSV file headings
+        - Records - each line of the configuartion file with a status of OK or Error
+        - Location - path to file
+        - Filename - name of file
+    Team
+        - Name - will be output to CL2 file and there may be other stuff we need to have for that file as well like ShortName, Address, etc.
+        - AgeGroups - array of age groups that have a minimum and maximum age that cannot overlap
+        - AgeUpDate - date that swimmers age up for this team
+        - Swimmers - array of swimmers
+    Family - created when processing the registration file
+        - Name - equal to the last name of the first parent
+        - Address
+        - Parents - Must have at lesat one, Array of Parents that is made up of Name, Email, Phone
+        - FeesOwed
+        - FeesPaid
+        - Swimmers - array of swimmers
+    Swimmers - created when processing the registration file and linked to the team automatically
+        - Name
+        - DOB - Date of Birth that along with Age Up Date on team can be used to calculate the age
+        - Gender
+        - T-ShirtSize
+        
+Pseudocode
+    - Read Configuration file and create registration files and teams
+    - For each registration file
+        - Open file and process through PapaParse
+        - Create Family and Swimmer arrays and link swimmers to the team
+        - Show results summay along w/ any errors found
+    - end loop
+    - Button to export data to team manager
+    - Button to export to CSV file
+    ------------------------------------------------------
+    - Allow error fixing and edit registration file
+    - Configuration page for team and registration file (headings mapping)
+    
+Potential errors to show during processing
+    - Incomplete information (no address, phone number, parent info, etc.)
+    - Invalid birthdate
+    - No valid parents
+    - No valid swimmers
